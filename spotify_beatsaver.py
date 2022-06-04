@@ -41,8 +41,8 @@ def downloadMap(hash, location):
         zip.extractall(path[:-4])
     os.remove(path)
 
-sp = spotipy.Spotify(auth_manager = SpotifyOAuth(client_id="ef607aed5091414abbfc138af39d0bec",
-                                                 client_secret="44f6141c090441068d1ec62da3e9466a",
+sp = spotipy.Spotify(auth_manager = SpotifyOAuth(client_id="your client id",
+                                                 client_secret="your client secret",
                                                  redirect_uri="http://localhost:8080",
                                                  scope="user-library-read"))
 
