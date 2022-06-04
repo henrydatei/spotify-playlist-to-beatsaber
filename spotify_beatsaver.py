@@ -1,6 +1,11 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import requests
+from zipfile import ZipFile
+import os
+import re
+
+beatSaberPath = "C:\Program Files (x86)\Steam\steamapps\common\Beat Saber\Beat Saber_Data\CustomLevels"
 
 def searchOnBeatsaver(artist, title, maxResults = 1, minScore = 0.6):
     query = artist + " " + title
@@ -23,8 +28,21 @@ def searchOnSpotify(query):
     artists = [artist["name"] for artist in result["tracks"]["items"][0]["artists"]]
     return title, artists
 
-sp = spotipy.Spotify(auth_manager = SpotifyOAuth(client_id="your client id",
-                                                 client_secret="your client secret",
+def downloadMap(hash, location):
+    r = requests.get("https://eu.cdn.beatsaver.com/{}.zip".format(hash))
+    r.raise_for_status()
+    d = r.headers['content-disposition']
+    fname = re.findall("filename=(.+)", d)[0].split('"')[1]
+    path = os.path.join(location, fname)
+    f = open(path, "wb")
+    f.write(r.content)
+    f.close()
+    with ZipFile(path, "r") as zip:
+        zip.extractall(path[:-4])
+    os.remove(path)
+
+sp = spotipy.Spotify(auth_manager = SpotifyOAuth(client_id="ef607aed5091414abbfc138af39d0bec",
+                                                 client_secret="44f6141c090441068d1ec62da3e9466a",
                                                  redirect_uri="http://localhost:8080",
                                                  scope="user-library-read"))
 
@@ -44,5 +62,6 @@ for item in results["items"]:
                     artistsTheSame = True
             if title == BSTitle and artistsTheSame:
                 print(title, artists, hash)
+                downloadMap(hash, beatSaberPath)
     except:
         pass
