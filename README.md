@@ -1,5 +1,5 @@
 # spotify-playlist-to-beatsaber
-A Python script that fetches a Spotify playlist and searches on [https://beatsaver.com](https://beatsaver.com) for the songs + downloaded them if found
+A Python script that fetches a Spotify playlist and searches on [https://beatsaver.com](https://beatsaver.com) for the songs + downloads them if found
 
 ### Usage
 Install required packages:
