@@ -46,8 +46,16 @@ sp = spotipy.Spotify(auth_manager = SpotifyOAuth(client_id="your client id",
                                                  redirect_uri="http://localhost:8080",
                                                  scope="user-library-read"))
 
-results = sp.playlist_tracks('spotify:playlist:37i9dQZF1DX7ZUug1ANKRP')
-for item in results["items"]:
+playlistID = "37i9dQZF1DX7e8TjkFNKWH"
+resultsRaw = sp.playlist_tracks('spotify:playlist:{}'.format(playlistID))
+results = resultsRaw["items"]
+total = 100
+while resultsRaw["total"] > total:
+    results.extend(sp.playlist_tracks('spotify:playlist:{}'.format(playlistID), offset = total)["items"])
+    total += 100
+print(len(results))
+notfound = []
+for item in results:
     artists = [artist["name"] for artist in item["track"]["album"]["artists"]]
     name = item["track"]["name"]
     firstArtist = artists[0]
@@ -64,4 +72,6 @@ for item in results["items"]:
                 print(title, artists, hash)
                 downloadMap(hash, beatSaberPath)
     except:
-        pass
+        notfound.append((title, artists))
+for title, artists in notfound:
+    print(", ".join(artists) + " - " + title)
